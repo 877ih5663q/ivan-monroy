@@ -1,66 +1,134 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Setup instructions
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+1.  Clone this repository.
 
-## About Laravel
+2.  Run `composer install` inside the repository.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+3.  Use `env.example` to create a new `.env` file.
+    
+    ```sh
+    cp env.example .env
+    ```
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+4.  Set the database credentials in the new `.env` file.
+    
+    ```sh
+    DB_CONNECTION=pgsql
+    DB_HOST=127.0.0.1
+    DB_PORT=5432
+    DB_DATABASE=tasks
+    DB_USERNAME=user
+    DB_PASSWORD=password
+    ```
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+5.  Apply the migrations with the `php artisan migrate` command.
 
-## Learning Laravel
+6.  Run the app with the `composer run dev` command.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+# Application endpoints
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+We can use the `curl` commands below to query the app's endpoints.
 
-## Laravel Sponsors
+Note that the bearer token is obtained when the user queries the `/api/login` endpoint:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```sh
+curl 'http://127.0.0.1:8000/api/login' \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  --data-raw '{
+    "email": "tsui@hark.com",
+    "password": "tsui12345"
+  }'
 
-### Premium Partners
+{"token":"2|f1v0wbqmzY42xCim7CkBhXVF5oXk6Q32vtlrObPya53c401c"}
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+In the example above, user 2 would pass the `2|f1v0wbqmzY42xCim7CkBhXVF5oXk6Q32vtlrObPya53c401c` in the `Authorization` header of their subsequent interactions with protected routes.
 
-## Contributing
+```sh
+curl 'http://127.0.0.1:8000/api/register' \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  --data-raw '{
+    "name": "Ringo Lam",
+    "email": "ringo@lam.com",
+    "password": "ringo123",
+    "password_confirmation": "ringo123"
+  }'
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+curl 'http://127.0.0.1:8000/api/register' \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  --data-raw '{
+    "name": "Tsui Hark",
+    "email": "tsui@hark.com",
+    "password": "tsui12345",
+    "password_confirmation": "tsui12345"
+  }'
 
-## Code of Conduct
+curl 'http://127.0.0.1:8000/api/login' \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  --data-raw '{
+    "email": "ringo@lam.com",
+    "password": "ringo123"
+  }'
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+curl 'http://127.0.0.1:8000/api/login' \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  --data-raw '{
+    "email": "tsui@hark.com",
+    "password": "tsui12345"
+  }'
 
-## Security Vulnerabilities
+curl 'http://127.0.0.1:8000/api/user' \
+  -X GET \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -H "Authorization: Bearer 1|O8rY4eV6vdLaxdy0472KM1NbkVh4NmvwP1RiOtnM5825cb68"
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+curl -X POST 'http://127.0.0.1:8000/api/tasks' \
+     -H "Authorization: Bearer 1|O8rY4eV6vdLaxdy0472KM1NbkVh4NmvwP1RiOtnM5825cb68" \
+     -H "Content-Type: application/json" \
+     --data-raw '{
+           "title": "New Task",
+           "description": "This is a new task",
+           "status": "pending",
+           "due_date": "2025-04-01",
+           "assigned_to": 2
+         }'
 
-## License
+curl -X GET "http://127.0.0.1:8000/api/tasks" \
+     -H "Authorization: Bearer 1|O8rY4eV6vdLaxdy0472KM1NbkVh4NmvwP1RiOtnM5825cb68"
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+curl -X GET "http://127.0.0.1:8000/api/tasks/1" \
+     -H "Authorization: Bearer 1|O8rY4eV6vdLaxdy0472KM1NbkVh4NmvwP1RiOtnM5825cb68"
+
+curl -X PUT "http://127.0.0.1:8000/api/tasks/1" \
+     -H "Authorization: Bearer 1|O8rY4eV6vdLaxdy0472KM1NbkVh4NmvwP1RiOtnM5825cb68" \
+     -H "Content-Type: application/json" \
+     -d '{
+           "title": "Updated Task",
+           "description": "This is an updated task",
+           "status": "in_progress",
+           "due_date": "2023-12-31",
+           "assigned_to": 2
+         }'
+
+curl -X DELETE "http://127.0.0.1:8000/api/tasks/1" \
+     -H "Authorization: Bearer 1|O8rY4eV6vdLaxdy0472KM1NbkVh4NmvwP1RiOtnM5825cb68"
+
+curl -X POST "http://127.0.0.1:8000/api/tasks/1/time-log" \
+     -H "Content-Type: application/json" \
+     -H "Authorization: Bearer 2|f1v0wbqmzY42xCim7CkBhXVF5oXk6Q32vtlrObPya53c401c" \
+     --data-raw '{
+         "minutes": 20
+     }'
+```
