@@ -4,10 +4,10 @@
 
 2.  Run `composer install` inside the repository.
 
-3.  Use `env.example` to create a new `.env` file.
+3.  Use `.env.example` to create a new `.env` file.
     
     ```sh
-    cp env.example .env
+    cp .env.example .env
     ```
 
 4.  Set the database credentials in the new `.env` file.
@@ -45,7 +45,7 @@ curl 'http://127.0.0.1:8000/api/login' \
 {"token":"2|f1v0wbqmzY42xCim7CkBhXVF5oXk6Q32vtlrObPya53c401c"}
 ```
 
-In the example above, user 2 would pass the `2|f1v0wbqmzY42xCim7CkBhXVF5oXk6Q32vtlrObPya53c401c` in the `Authorization` header of their subsequent interactions with protected routes.
+In the example above, user _tsui@hark.com_ would pass the `2|f1v0wbqmzY42xCim7CkBhXVF5oXk6Q32vtlrObPya53c401c` token in the `Authorization` header of their subsequent interactions with protected routes.
 
 ```sh
 curl 'http://127.0.0.1:8000/api/register' \
